@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AŁɨSāN Prompt — AI প্রম্পট শোকেস</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #09090c;
+    --surface: #131217;
+    --surface-2: #1b1a20;
+    --line: #2a2830;
+    --text: #ece7dd;
+    --muted: #9d97a3;
+    --ember: #c9a227;
+    --ember-dim: #7d6a2a;
+    --crimson: #7a2230;
+    --shadow: rgba(0,0,0,0.6);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:
+      radial-gradient(ellipse 90% 60% at 50% -10%, rgba(201,162,39,0.08), transparent 60%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Hind Siliguri', sans-serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* film grain overlay */
+  .grain{
+    position:fixed; inset:0; pointer-events:none; z-index:50;
+    opacity:0.05; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ===== Header / Hero ===== */
+  header{
+    position:relative;
+    padding:64px 24px 48px;
+    text-align:center;
+    border-bottom:1px solid var(--line);
+    overflow:hidden;
+  }
+  header::before{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      linear-gradient(180deg, transparent 0%, var(--bg) 95%),
+      repeating-linear-gradient(115deg, rgba(201,162,39,0.03) 0px, rgba(201,162,39,0.03) 1px, transparent 1px, transparent 14px);
+    pointer-events:none;
+  }
+  .brand-logo{
+    width:96px;
+    height:96px;
+    object-fit:contain;
+    display:inline-block;
+    margin-bottom:10px;
+    filter:drop-shadow(0 0 14px rgba(201,162,39,0.35));
+  }
+  .brand{
+    font-family:'Cinzel', serif;
+    font-weight:700;
+    font-size:clamp(32px, 8vw, 54px);
+    letter-spacing:0.06em;
+    color:var(--text);
+    position:relative;
+    z-index:1;
+  }
+  .brand span{ color:var(--ember); }
+  .tagline{
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-size:clamp(16px, 3.6vw, 20px);
+    color:var(--muted);
+    margin-top:10px;
+    position:relative; z-index:1;
+    letter-spacing:0.02em;
+  }
+  .rule{
+    width:64px; height:1px;
+    background:linear-gradient(90deg, transparent, var(--ember), transparent);
+    margin:22px auto 0;
+    position:relative; z-index:1;
+  }
+
+  /* ===== Filters ===== */
+  .filters{
+    display:flex; gap:10px; flex-wrap:wrap;
+    justify-content:center;
+    padding:22px 20px;
+    position:sticky; top:0; z-index:30;
+    background:rgba(9,9,12,0.88);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .chip{
+    font-family:'Hind Siliguri', sans-serif;
+    font-size:13.5px;
+    padding:8px 16px;
+    border:1px solid var(--line);
+    border-radius:999px;
+    background:var(--surface);
+    color:var(--muted);
+    cursor:pointer;
+    transition:all 0.25s ease;
+    white-space:nowrap;
+  }
+  .chip:hover{ border-color:var(--ember-dim); color:var(--text); }
+  .chip.active{
+    background:var(--ember);
+    border-color:var(--ember);
+    color:#161208;
+    font-weight:600;
+  }
+
+  /* ===== Gallery ===== */
+  .gallery{
+    max-width:1180px;
+    margin:0 auto;
+    padding:36px 18px 90px;
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));
+    gap:22px;
+  }
+  .card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:6px;
+    overflow:hidden;
+    position:relative;
+    transition:transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+    display:flex; flex-direction:column;
+  }
+  .card:hover{
+    transform:translateY(-4px);
+    border-color:var(--ember-dim);
+    box-shadow:0 18px 40px var(--shadow);
+  }
+  .card-media{
+    position:relative;
+    aspect-ratio:4/5;
+    overflow:hidden;
+    background:var(--surface-2);
+  }
+  .card-media img{
+    width:100%; height:100%; object-fit:cover;
+    display:block;
+    filter:saturate(0.92) contrast(1.05);
+    transition:transform 0.6s ease, filter 0.6s ease;
+  }
+  .card:hover .card-media img{
+    transform:scale(1.06);
+    filter:saturate(1.05) contrast(1.1);
+  }
+  .card-media::after{
+    content:"";
+    position:absolute; inset:0;
+    background:linear-gradient(180deg, transparent 55%, rgba(9,9,12,0.9) 100%);
+  }
+  .tag{
+    position:absolute; top:12px; left:12px; z-index:2;
+    font-size:11px;
+    padding:4px 10px;
+    border-radius:999px;
+    background:rgba(9,9,12,0.75);
+    border:1px solid rgba(201,162,39,0.4);
+    color:var(--ember);
+    letter-spacing:0.03em;
+  }
+  .card-body{
+    padding:16px 16px 14px;
+    display:flex; flex-direction:column; gap:10px; flex:1;
+  }
+  .prompt-text{
+    font-size:13.5px;
+    line-height:1.55;
+    color:#cfc9bd;
+    display:-webkit-box;
+    -webkit-line-clamp:3;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+  }
+  .card-foot{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-top:auto;
+    padding-top:8px;
+    border-top:1px solid var(--line);
+  }
+  .card-title{
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-size:14.5px;
+    color:var(--muted);
+  }
+  .copy-btn{
+    font-family:'Hind Siliguri', sans-serif;
+    font-size:12px;
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--text);
+    padding:6px 12px;
+    border-radius:5px;
+    cursor:pointer;
+    transition:all 0.2s ease;
+  }
+  .copy-btn:hover{ border-color:var(--ember); color:var(--ember); }
+  .copy-btn.copied{ background:var(--ember); color:#161208; border-color:var(--ember); }
+
+  footer{
+    text-align:center;
+    padding:34px 20px 50px;
+    color:var(--muted);
+    font-size:12.5px;
+    border-top:1px solid var(--line);
+  }
+  footer .brand-logo{ width:48px; height:48px; margin-bottom:8px; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; scroll-behavior:auto !important; }
+  }
+
+  ::selection{ background:var(--ember); color:#161208; }
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<header>
+  <img class="brand-logo" src="logo.png" alt="AŁɨSāN logo">
+  <div class="brand">AŁɨSāN <span>Prompt</span></div>
+  <div class="tagline">প্রম্পটের পেছনের গল্প — প্রতিটি ছবির নিচে লুকানো শব্দ</div>
+  <div class="rule"></div>
+</header>
+
+<div class="filters" id="filters"></div>
+
+<main class="gallery" id="gallery"></main>
+
+<footer>
+  <img class="brand-logo" src="logo.png" alt="AŁɨSāN logo">
+  AŁɨSāN Prompt — নিজের তৈরি AI আর্ট ও প্রম্পট শেয়ার করুন
+</footer>
+
+<script>
+  // ==== এখানে নিজের ছবি ও প্রম্পট বসান ====
+  // image: Google Drive শেয়ার লিংক দিলে চলবে (উদাহরণ ফরম্যাট নিচে কমেন্টে)
+  const DATA = [
+    {
+      title: "সিনেমাটিক পোর্ট্রেট",
+      category: "Studio Photography",
+      image: "images/photo1.jpg",
+      prompt: "একটি উচ্চ-মানের, সিনেমাটিক পোর্ট্রেট ফটোগ্রাফ যেখানে একজন বাস্তব ব্যক্তি (আপনার ছবি ব্যবহার করুন) ছবির ডানদিকে তাকিয়ে আছেন। তার চুল কালো এবং এলোমেলো (anime-style নয়, বাস্তবসম্মত)। ঠিক যেমনটি image_0.png ছবিতে আছে।"
+    },
+    {
+      title: "আগুনের ছায়া",
+      category: "Attitude",
+      image: "https://picsum.photos/seed/alisan1/600/750",
+      prompt: "A lone figure standing in silhouette against a burning orange sky, cinematic backlighting, dust particles floating in the air, dramatic low-angle shot, film grain, moody color grade, 35mm lens look"
+    },
+    {
+      title: "নীরব যুদ্ধ",
+      category: "Life Philosophy",
+      image: "https://picsum.photos/seed/alisan2/600/750",
+      prompt: "A worn leather journal open on a dark wooden desk under a single warm lamp, smoke curling upward, deep shadows, rembrandt lighting, contemplative mood, hyper-detailed texture"
+    },
+    {
+      title: "মধ্যরাতের শহর",
+      category: "Cinematic",
+      image: "https://picsum.photos/seed/alisan3/600/750",
+      prompt: "Rain-soaked city street at night, neon reflections on wet asphalt, a man walking away from camera in a long coat, teal and amber color grade, anamorphic lens flare, noir atmosphere"
+    },
+    {
+      title: "ভাঙা মুকুট",
+      category: "Attitude",
+      image: "https://picsum.photos/seed/alisan4/600/750",
+      prompt: "Close-up portrait of a king's cracked golden crown resting on ash, dramatic side lighting, dark obsidian background, hyper-realistic textures, symbolic composition, cinematic still"
+    },
+    {
+      title: "একাকী পথ",
+      category: "Life Philosophy",
+      image: "https://picsum.photos/seed/alisan5/600/750",
+      prompt: "A single set of footprints across an endless desert at golden hour, long shadows, minimal composition, warm dusty tones, sense of solitude and journey, wide cinematic shot"
+    },
+    {
+      title: "ত্রিশূলের প্রতিচ্ছবি",
+      category: "Cinematic",
+      image: "https://picsum.photos/seed/alisan6/600/750",
+      prompt: "A trident silhouette against a stormy dark sky with lightning in the background, epic scale, dramatic clouds, high contrast black and gold color palette, mythic atmosphere"
+    }
+  ];
+  // Google Drive ইমেজ ব্যবহার করতে চাইলে লিংক এই ফরম্যাটে দিন:
+  // "https://drive.google.com/uc?export=view&id=FILE_ID"
+
+  const categories = ["সব", ...new Set(DATA.map(d => d.category))];
+  const filtersEl = document.getElementById('filters');
+  const galleryEl = document.getElementById('gallery');
+
+  function render(list){
+    galleryEl.innerHTML = list.map((item, i) => `
+      <article class="card">
+        <div class="card-media">
+          <span class="tag">${item.category}</span>
+          <img src="${item.image}" alt="${item.title}" loading="lazy">
+        </div>
+        <div class="card-body">
+          <p class="prompt-text">${item.prompt}</p>
+          <div class="card-foot">
+            <span class="card-title">${item.title}</span>
+            <button class="copy-btn" data-idx="${i}">প্রম্পট কপি</button>
+          </div>
+        </div>
+      </article>
+    `).join('');
+
+    galleryEl.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = btn.dataset.idx;
+        navigator.clipboard.writeText(list[idx].prompt).then(() => {
+          btn.textContent = "কপি হয়েছে ✓";
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = "প্রম্পট কপি";
+            btn.classList.remove('copied');
+          }, 1500);
+        });
+      });
+    });
+  }
+
+  filtersEl.innerHTML = categories.map((c, i) =>
+    `<button class="chip ${i===0 ? 'active' : ''}" data-cat="${c}">${c}</button>`
+  ).join('');
+
+  filtersEl.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      filtersEl.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      const cat = chip.dataset.cat;
+      render(cat === "সব" ? DATA : DATA.filter(d => d.category === cat));
+    });
+  });
+
+  render(DATA);
+</script>
+</body>
+</html>
